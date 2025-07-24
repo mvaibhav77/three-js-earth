@@ -5,15 +5,16 @@ import getFresnelMat from "./getFresnelMat.js";
 /**
  * Creates all Earth-related meshes (earth, lights, clouds, glow)
  * @param {Group} earthGroup - The Three.js group to add meshes to
+ * @param {Object} textures - The loaded textures
  * @returns {Object} Object containing all Earth meshes
  */
-export const createEarthMeshes = (earthGroup) => {
+export const createEarthMeshes = (earthGroup, textures) => {
   // Create geometry (shared by all meshes)
   const earthGeo = new IcosahedronGeometry(1, 12);
 
   // Get all materials
   const { earthMaterial, lightsMaterial, cloudsMaterial } =
-    createEarthMaterials();
+    createEarthMaterials(textures);
 
   // Main Earth mesh
   const earthMesh = new Mesh(earthGeo, earthMaterial);

@@ -1,41 +1,28 @@
-import {
-  AdditiveBlending,
-  MeshBasicMaterial,
-  MeshPhongMaterial,
-  TextureLoader,
-} from "three";
-
-// Import textures
-import DayEarth from "../assets/textures/day_earth.jpg";
-import NightEarth from "../assets/textures/night_earth.jpg";
-import Clouds from "../assets/textures/cloudMap.jpg";
-import Bump from "../assets/textures/bump_earth.jpg";
-import Spec from "../assets/textures/spec_earth.tif";
+import { AdditiveBlending, MeshBasicMaterial, MeshPhongMaterial } from "three";
 
 /**
  * Creates and returns all materials needed for the Earth
+ * @param {Object} textures - The loaded textures
  * @returns {Object} Object containing all Earth materials
  */
-export const createEarthMaterials = () => {
-  const loader = new TextureLoader();
-
+export const createEarthMaterials = (textures) => {
   // Main Earth material with day texture, specular, and bump mapping
   const earthMaterial = new MeshPhongMaterial({
-    map: loader.load(DayEarth),
-    specularMap: loader.load(Spec),
-    bumpMap: loader.load(Bump),
+    map: textures.day,
+    specularMap: textures.spec,
+    bumpMap: textures.bump,
     bumpScale: 0.04,
   });
 
   // Night lights material (city lights)
   const lightsMaterial = new MeshBasicMaterial({
-    map: loader.load(NightEarth),
+    map: textures.night,
     blending: AdditiveBlending,
   });
 
   // Clouds material with transparency
   const cloudsMaterial = new MeshBasicMaterial({
-    map: loader.load(Clouds),
+    map: textures.clouds,
     transparent: true,
     opacity: 0.8,
     blending: AdditiveBlending,
