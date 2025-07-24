@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import {
   HemisphereLight,
   IcosahedronGeometry,
@@ -18,14 +18,29 @@ const w = window.innerWidth;
 const h = window.innerHeight;
 
 function App() {
+  const sceneRef = useRef(null);
+  const rendererRef = useRef(null); 
+
   useEffect(() => {
-    // clear evrything before rerender
-    document.body.innerHTML = "";
+    const currentRef = sceneRef.current; 
+
+    if (!currentRef) return; 
+
+    // Check if a canvas already exists
+    if (currentRef.firstChild) {
+      // Clean up previous instance (optional, but good practice)
+      if (rendererRef.current) {
+        rendererRef.current.dispose();
+      }
+      currentRef.removeChild(currentRef.firstChild);
+    }
 
     // Set Renderer
     const renderer = new WebGLRenderer({ antialias: true });
     renderer.setSize(w, h);
-    document.body.appendChild(renderer.domElement);
+    rendererRef.current = renderer;
+
+    currentRef.appendChild(renderer.domElement);
 
     // define camera and scene
     const fov = 75; // Field of view
@@ -41,11 +56,11 @@ function App() {
     controls.dampingFactor = 0.03;
 
     // work on real object
-    const geo = new IcosahedronGeometry(1.0, 2); // Create an icosahedron geometry
+    const geo = new IcosahedronGeometry(1.0, 2); // Create any geometry
     const mat = new MeshStandardMaterial({
       color: 0xffffff,
       flatShading: true,
-    }); // Use a normal material for shading
+    }); // Use a standard material for shading
     const mesh = new Mesh(geo, mat); // Create a mesh with the geometry and material
 
     scene.add(mesh); // Add the mesh to the scene
@@ -62,15 +77,28 @@ function App() {
     const hemilight = new HemisphereLight(0x0099ff, 0xaa5588); // Create a hemisphere light
 
     scene.add(hemilight); // Add the light to the scene
+
     function animate() {
       requestAnimationFrame(animate);
       renderer.render(scene, camera);
       controls.update();
     }
     animate();
+
+    return () => {
+      if (currentRef && currentRef.firstChild) {
+        currentRef.removeChild(currentRef.firstChild);
+      }
+      if (rendererRef.current) {
+        rendererRef.current.dispose();
+      }
+      geo.dispose();
+      mat.dispose();
+      wireMat.dispose();
+    };
   }, []);
 
-  return <></>;
+  return <div className="threejs-canvas" ref={sceneRef} />;
 }
 
 export default App;

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import {
   PerspectiveCamera,
   Scene,
@@ -35,14 +35,29 @@ const w = window.innerWidth;
 const h = window.innerHeight;
 
 function App() {
+  const sceneRef = useRef(null);
+  const rendererRef = useRef(null); // Ref to store the renderer
+
   useEffect(() => {
-    // Clear everything before rerender
-    document.body.innerHTML = "";
+    const currentRef = sceneRef.current; // Capture the current ref
+
+    if (!currentRef) return; // Exit if the ref is not yet attached
+
+    // Check if a canvas already exists
+    if (currentRef.firstChild) {
+      // Clean up previous instance (optional, but good practice)
+      if (rendererRef.current) {
+        rendererRef.current.dispose();
+      }
+      currentRef.removeChild(currentRef.firstChild); // Remove the existing canvas
+    }
 
     // Set up Renderer
     const renderer = new WebGLRenderer({ antialias: true });
     renderer.setSize(w, h);
-    document.body.appendChild(renderer.domElement);
+    rendererRef.current = renderer; // Store the renderer in the ref
+
+    currentRef.appendChild(renderer.domElement);
 
     // Set up Camera
     const fov = 75; // Field of view
@@ -88,9 +103,21 @@ function App() {
     }
 
     animate();
+
+    return () => {
+      if (currentRef && currentRef.firstChild) {
+        currentRef.removeChild(currentRef.firstChild);
+      }
+      if (rendererRef.current) {
+        rendererRef.current.dispose();
+      }
+      geometry.dispose();
+      material.dispose();
+      wireMat.dispose();
+    };
   }, []);
 
-  return <></>;
+  return <div className="threejs-canvas" ref={sceneRef} />;
 }
 
 export default App;
