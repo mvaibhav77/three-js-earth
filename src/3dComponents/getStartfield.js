@@ -7,7 +7,7 @@ import {
   TextureLoader,
   Vector3,
 } from "three";
-import Star from "../assets/star.png"
+import Star from "../assets/star.png";
 
 export default function getStarfield({ numStars = 500 } = {}) {
   function randomSpherePoint() {

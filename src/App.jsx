@@ -8,6 +8,7 @@ import {
   LinearSRGBColorSpace,
   Mesh,
   MeshBasicMaterial,
+  MeshPhongMaterial,
   MeshStandardMaterial,
   PerspectiveCamera,
   Scene,
@@ -15,16 +16,18 @@ import {
   WebGLRenderer,
 } from "three";
 import { OrbitControls } from "three/examples/jsm/Addons.js";
+import getStarfield from "./3dComponents/getStartfield.js";
+import getFresnelMat from "./3dComponents/getFresnelMat.js";
 
 // 2K Earth Textures taken from https://www.solarsystemscope.com/textures/
 import DayEarth from "./assets/textures/day_earth.jpg";
 import NightEarth from "./assets/textures/night_earth.jpg";
-
-// 1K Cloud and Bump Texture from https://www.solarsystemscope.com/textures/
 import Clouds from "./assets/textures/cloudMap.jpg";
+
+// Bump Texture from https://www.solarsystemscope.com/textures/
+
 import Bump from "./assets/textures/bump_earth.jpg";
-import Spec from "./assets/textures/spec_earth.jpg";
-import getStarfield from "./3dComponents/getStartfield.js";
+import Spec from "./assets/textures/spec_earth.tif";
 
 const w = window.innerWidth;
 const h = window.innerHeight;
@@ -76,9 +79,16 @@ function App() {
 
     // Our main 3d object definition
     const earthGeo = new IcosahedronGeometry(1, 12);
-    const mat = new MeshStandardMaterial({
+    // const mat = new MeshStandardMaterial({
+    //   map: loader.load(DayEarth),
+    //   // map: loader.load(NightEarth),
+    // });
+
+    const mat = new MeshPhongMaterial({
       map: loader.load(DayEarth),
-      // map: loader.load(NightEarth),
+      specularMap: loader.load(Spec),
+      bumpMap: loader.load(Bump),
+      bumpScale: 0.04,
     });
     const earthMesh = new Mesh(earthGeo, mat);
     earthGroup.add(earthMesh);
@@ -90,15 +100,20 @@ function App() {
     const lightsMesh = new Mesh(earthGeo, lightsMat);
     earthGroup.add(lightsMesh);
 
-    // const cloudsMat = new MeshBasicMaterial({
-    //   map: loader.load(Clouds),
-    //   transparent: true,
-    //   opacity: 0.8,
-    //   blending: AdditiveBlending,
-    // });
-    // const cloudsMesh = new Mesh(earthGeo, cloudsMat);
-    // cloudsMesh.scale.setScalar(1.001);
-    // earthGroup.add(cloudsMesh);
+    const fresnelMat = getFresnelMat();
+    const glowMesh = new Mesh(earthGeo, fresnelMat);
+    glowMesh.scale.setScalar(1.01);
+    earthGroup.add(glowMesh);
+
+    const cloudsMat = new MeshBasicMaterial({
+      map: loader.load(Clouds),
+      transparent: true,
+      opacity: 0.8,
+      blending: AdditiveBlending,
+    });
+    const cloudsMesh = new Mesh(earthGeo, cloudsMat);
+    cloudsMesh.scale.setScalar(1.01);
+    earthGroup.add(cloudsMesh);
 
     // Add Stars in the background
     const stars = getStarfield({ numStars: 3000 });
@@ -112,8 +127,10 @@ function App() {
     function animate() {
       requestAnimationFrame(animate);
 
-      earthMesh.rotation.y += 0.001;
-      lightsMesh.rotation.y += 0.001;
+      earthMesh.rotation.y += 0.002;
+      lightsMesh.rotation.y += 0.002;
+      cloudsMesh.rotation.y += 0.002;
+      glowMesh.rotation.y += 0.002;
 
       renderer.render(scene, camera);
       controls.update();
