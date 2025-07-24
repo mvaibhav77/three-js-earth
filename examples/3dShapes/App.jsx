@@ -11,23 +11,8 @@ import {
 } from "three";
 import { OrbitControls } from "three/examples/jsm/Addons.js";
 
-// // Theory for Three.js
-// Three.js is a JavaScript library that makes it easy to create 3D graphics in the browser using WebGL.
-
-// Camera
-// The camera defines the viewpoint from which the scene is observed. It determines what is visible and how it is projected onto the screen.
-
-// Scene
-// The scene is the container for all 3D objects, lights, and cameras. It represents the 3D space where the objects are placed.
-
-// Renderer
-// The renderer is responsible for taking the scene and camera and rendering the final image to the screen.
-
-// Material
-// Materials define the appearance of 3D objects. They determine how the surface interacts with light and can create various visual effects.
-
-// Mesh
-// A mesh is a 3D object composed of geometry (shape) and material (appearance). It is the basic building block of 3D scenes.
+// Example for Three.js
+// A Icosehadron Shape with wire mesh and hemisphere lighting.
 
 const w = window.innerWidth;
 const h = window.innerHeight;
