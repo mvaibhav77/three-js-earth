@@ -1,74 +1,109 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import {
-  HemisphereLight,
+  DirectionalLight,
+  Group,
   IcosahedronGeometry,
   Mesh,
-  MeshBasicMaterial,
   MeshStandardMaterial,
   PerspectiveCamera,
   Scene,
+  TextureLoader,
   WebGLRenderer,
 } from "three";
 import { OrbitControls } from "three/examples/jsm/Addons.js";
+
+// 2K Textures taken from https://www.solarsystemscope.com/textures/
+import DayEarth from "./assets/textures/day_earth.jpg";
+import NightEarth from "./assets/textures/night_earth.jpg";
+import getStarfield from "./3dComponents/getStartfield.js";
 
 const w = window.innerWidth;
 const h = window.innerHeight;
 
 function App() {
+  const sceneRef = useRef(null);
+  const rendererRef = useRef(null);
+
   useEffect(() => {
-    // clear evrything before rerender
-    document.body.innerHTML = "";
+    const currentRef = sceneRef.current;
+
+    if (!currentRef) return;
+
+    // Check if a canvas already exists
+    if (currentRef.firstChild) {
+      // Clean up previous instance (optional, but good practice)
+      if (rendererRef.current) {
+        rendererRef.current.dispose();
+      }
+      currentRef.removeChild(currentRef.firstChild);
+    }
 
     // Set Renderer
     const renderer = new WebGLRenderer({ antialias: true });
     renderer.setSize(w, h);
-    document.body.appendChild(renderer.domElement);
+    rendererRef.current = renderer;
+
+    currentRef.appendChild(renderer.domElement);
 
     // define camera and scene
-    const fov = 75; // Field of view
-    const aspect = w / h; // Aspect ratio
-    const near = 0.1; // Near clipping plane
-    const far = 1000; // Far clipping plane
+    const fov = 75;
+    const aspect = w / h;
+    const near = 0.1;
+    const far = 1000;
     const camera = new PerspectiveCamera(fov, aspect, near, far);
-    camera.position.z = 2; // Position the camera
+    camera.position.z = 2;
     const scene = new Scene();
 
+    const earthGroup = new Group();
+    earthGroup.rotation.z = -23.4 * (Math.PI / 180);
+    scene.add(earthGroup);
+
+    // Control Options
     const controls = new OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.03;
 
-    // work on real object
-    const geo = new IcosahedronGeometry(1.0, 2); // Create an icosahedron geometry
+    const loader = new TextureLoader();
+
+    // Our main 3d object definition
+    const earthGeo = new IcosahedronGeometry(1, 12);
     const mat = new MeshStandardMaterial({
-      color: 0xffffff,
-      flatShading: true,
-    }); // Use a normal material for shading
-    const mesh = new Mesh(geo, mat); // Create a mesh with the geometry and material
-
-    scene.add(mesh); // Add the mesh to the scene
-
-    const wireMat = new MeshBasicMaterial({
-      color: 0xffffff,
-      wireframe: true,
+      map: loader.load(DayEarth),
+      // map: loader.load(NightEarth),
     });
+    const earthMesh = new Mesh(earthGeo, mat);
+    earthGroup.add(earthMesh);
 
-    const wireMesh = new Mesh(geo, wireMat);
-    wireMesh.scale.setScalar(1.001);
-    mesh.add(wireMesh);
+    // Add Stars in the background
+    const stars = getStarfield();
+    scene.add(stars);
 
-    const hemilight = new HemisphereLight(0x0099ff, 0xaa5588); // Create a hemisphere light
-
-    scene.add(hemilight); // Add the light to the scene
+    // Add lighting (Sunlight Effect)
+    const sunLight = new DirectionalLight(0xffffff, 2.0);
+    sunLight.position.set(-2, 0.5, 1.5);
+    scene.add(sunLight);
 
     function animate() {
       requestAnimationFrame(animate);
+
+      earthMesh.rotation.y += 0.001;
+
       renderer.render(scene, camera);
       controls.update();
     }
     animate();
+
+    return () => {
+      if (currentRef && currentRef.firstChild) {
+        currentRef.removeChild(currentRef.firstChild);
+      }
+      if (rendererRef.current) {
+        rendererRef.current.dispose();
+      }
+      earthGeo.dispose();
+      mat.dispose();
+    };
   }, []);
 
-  return <></>;
+  return <div className="threejs-canvas" ref={sceneRef} />;
 }
 
 export default App;
