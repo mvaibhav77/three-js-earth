@@ -1,12 +1,97 @@
-# React + Vite
+# 🌍 Three.js Earth - React Implementation
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A beautiful, interactive 3D Earth visualization built with Three.js and React, featuring realistic textures, atmospheric glow, dynamic clouds, and city lights.
 
-Currently, two official plugins are available:
+## 🚀 [Live Demo](https://three-js-earth-teal.vercel.app/)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+![Earth Preview](https://img.shields.io/badge/Three.js-000000?style=for-the-badge&logo=three.js&logoColor=white)
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)
 
-## Expanding the ESLint configuration
+## ✨ Features
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- **Realistic Earth Textures** - High-quality day/night earth maps
+- **Dynamic Cloud Layer** - Animated clouds with transparency
+- **City Lights** - Night-time city illumination
+- **Atmospheric Glow** - Fresnel-based atmospheric effect
+- **Starfield Background** - Procedurally generated stars
+- **Interactive Controls** - Mouse/touch controls for rotation and zoom
+- **Responsive Design** - Adapts to any screen size
+- **Optimized Performance** - 60fps smooth animations
+
+## 🎓 Learning Journey
+
+This project represents my first dive into Three.js! I followed an excellent vanilla JavaScript tutorial by [Robot Bobby](https://www.youtube.com/@robotbobby9) and adapted it to React.
+
+**Original Tutorial**: [Three.js Earth Tutorial](https://youtu.be/UMqNHi1GDAE?si=ExIAxjb_CP9tElme)
+
+Huge shoutout to **Robot Bobby** for the amazing tutorial that made this possible! 🙌
+
+## 🛠️ Tech Stack
+
+- **Three.js** - 3D graphics library
+- **React** - UI framework
+- **Vite** - Build tool
+- **Vercel** - Deployment platform
+
+## 🚀 Quick Start
+
+```bash
+# Clone the repository
+git clone https://github.com/mvaibhav77/three-js-earth.git
+
+# Navigate to project directory
+cd three-js-earth
+
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+```
+
+## 📁 Project Structure
+
+This project uses a modular architecture for better maintainability. For detailed information about the folder structure and components, see [STRUCTURE.md](./STRUCTURE.md).
+
+## 📚 Examples & Learning Resources
+
+Want to learn Three.js? Check out the `examples/` folder:
+
+- **`examples/boilerplate/`** - Minimal Three.js setup to get you started
+- **`examples/3dShapes/`** - Basic 3D shapes and concepts
+- **`examples/dayNightTransition/`** - Advanced shader-based day/night effects
+
+Perfect for beginners who want to understand Three.js fundamentals!
+
+## 🎨 Customization
+
+The modular structure makes it easy to:
+
+- Swap textures for different planets
+- Adjust rotation speeds and lighting
+- Add new visual effects
+- Modify materials and shaders
+
+## 🤝 Contributing
+
+Contributions are welcome! Feel free to:
+
+- Report bugs
+- Suggest new features
+- Submit pull requests
+- Improve documentation
+
+## 📄 License
+
+This project is open source and available under the [MIT License](LICENSE).
+
+## 🙏 Acknowledgments
+
+- **Robot Bobby** - Original vanilla JS tutorial creator
+- **Three.js Community** - Amazing 3D graphics library
+- **Solar System Scope** - High-quality Earth textures
+
+---
+
+**Made with ❤️ and lots of ☕ while learning Three.js**+ Vite
