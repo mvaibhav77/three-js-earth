@@ -35,6 +35,7 @@ const h = window.innerHeight;
 function App() {
   const sceneRef = useRef(null);
   const rendererRef = useRef(null);
+  const cameraRef = useRef(null); // Add camera ref for resize handling
 
   useEffect(() => {
     const currentRef = sceneRef.current;
@@ -59,6 +60,9 @@ function App() {
     renderer.toneMapping = ACESFilmicToneMapping;
     renderer.outputColorSpace = LinearSRGBColorSpace;
 
+    // Improve depth precision to reduce z-fighting
+    renderer.sortObjects = true;
+
     // define camera and scene
     const fov = 75;
     const aspect = w / h;
@@ -66,6 +70,7 @@ function App() {
     const far = 1000;
     const camera = new PerspectiveCamera(fov, aspect, near, far);
     camera.position.z = 2;
+    cameraRef.current = camera; // Store camera reference
     const scene = new Scene();
 
     const earthGroup = new Group();
@@ -102,7 +107,7 @@ function App() {
 
     const fresnelMat = getFresnelMat();
     const glowMesh = new Mesh(earthGeo, fresnelMat);
-    glowMesh.scale.setScalar(1.01);
+    glowMesh.scale.setScalar(1.012); // Changed from 1.01 to 1.02 to be between clouds and earth
     earthGroup.add(glowMesh);
 
     const cloudsMat = new MeshBasicMaterial({
@@ -110,9 +115,10 @@ function App() {
       transparent: true,
       opacity: 0.8,
       blending: AdditiveBlending,
+      depthWrite: false, // Prevent depth buffer writes for transparent objects
     });
     const cloudsMesh = new Mesh(earthGeo, cloudsMat);
-    cloudsMesh.scale.setScalar(1.01);
+    cloudsMesh.scale.setScalar(1.015); // Increased from 1.01 to 1.03
     earthGroup.add(cloudsMesh);
 
     // Add Stars in the background
@@ -127,17 +133,38 @@ function App() {
     function animate() {
       requestAnimationFrame(animate);
 
-      earthMesh.rotation.y += 0.002;
-      lightsMesh.rotation.y += 0.002;
-      cloudsMesh.rotation.y += 0.002;
-      glowMesh.rotation.y += 0.002;
+      earthMesh.rotation.y += 0.001;
+      lightsMesh.rotation.y += 0.001;
+      cloudsMesh.rotation.y += 0.0015;
+      glowMesh.rotation.y += 0.001;
 
       renderer.render(scene, camera);
       controls.update();
     }
     animate();
 
+    // Handle window resize
+    const handleWindowResize = () => {
+      if (cameraRef.current && rendererRef.current) {
+        const newWidth = window.innerWidth;
+        const newHeight = window.innerHeight;
+
+        // Update camera aspect ratio
+        cameraRef.current.aspect = newWidth / newHeight;
+        cameraRef.current.updateProjectionMatrix();
+
+        // Update renderer size
+        rendererRef.current.setSize(newWidth, newHeight);
+      }
+    };
+
+    // Add resize event listener
+    window.addEventListener("resize", handleWindowResize, false);
+
     return () => {
+      // Remove resize event listener
+      window.removeEventListener("resize", handleWindowResize, false);
+
       if (currentRef && currentRef.firstChild) {
         currentRef.removeChild(currentRef.firstChild);
       }
